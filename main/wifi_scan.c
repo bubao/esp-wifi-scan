@@ -129,26 +129,27 @@ static void print_cipher_type(int pairwise_cipher, int group_cipher)
 
 void wifi_scan()
 {
-    wifi_scan_config_t scan_config = {
-        .ssid = 0,
-        .bssid = 0,
-        .channel = 0,
-        // .show_hidden = true,
-        .scan_type = WIFI_SCAN_TYPE_ACTIVE,
-        .scan_time = {
-            .active = {
-                .min = 100,
-                .max = 300 } }
-    };
-    uint16_t ap_count = 0;
-    wifi_country_t config = {
-        .cc = "CN",
-        .schan = 1,
-        .nchan = 13,
-    };
-    esp_wifi_set_country(&config);
+    // wifi_scan_config_t scan_config = {
+    //     .ssid = 0,
+    //     .bssid = 0,
+    //     .channel = 0,
+    //     // .show_hidden = true,
+    //     .scan_type = WIFI_SCAN_TYPE_ACTIVE,
+    //     .scan_time = {
+    //         .active = {
+    //             .min = 100,
+    //             .max = 300 } }
+    // };
 
-    esp_err_t err = esp_wifi_scan_start(&scan_config, true);
+    // wifi_country_t config = {
+    //     .cc = "CN",
+    //     .schan = 1,
+    //     .nchan = 13,
+    // };
+    // esp_wifi_set_country(&config);
+
+    esp_err_t err = esp_wifi_scan_start(NULL, true);
+    uint16_t ap_count = 0;
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "esp_wifi_scan_start failed: %d", err);
     }
@@ -192,7 +193,6 @@ void wifi_init()
 void app_main(void)
 {
     // 初始化NVS
-    esp_log_level_set("phy", ESP_LOG_ERROR);
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -212,7 +212,4 @@ void app_main(void)
         ESP_LOGI(TAG, "Scan completed!");
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
-
-    // 扫描完成后停止WiFi以节省电量
-    // ESP_ERROR_CHECK(esp_wifi_stop());
 }
